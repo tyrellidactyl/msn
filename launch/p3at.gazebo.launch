@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Gazebo -->
+  <arg name="world" default="PioneerPlume.world"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find msn)/worlds/$(arg world)"/>
+    <arg name="paused" value="true"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="false"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Use URDF model from AMR  1.5717 -->
+  <arg name="urdf" default="$(find amr_robots_description)/urdf/pioneer3at.urdf.xacro"/>
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg urdf)"/>
+  <arg name="name" default="pioneer3at"/>
+  <arg name="initX" default="0"/>
+  <arg name="initY" default="0"/>
+  <arg name="initYaw" default="0"/>
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-x $(arg initX) -y $(arg initY) -Y $(arg initYaw) -param robot_description -urdf -model $(arg name)"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- Start rviz --><!--
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find nre_p3at)/rviz/p3at_single.rviz" output="screen"/>-->
+</launch>
